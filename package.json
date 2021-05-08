@@ -12,9 +12,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/fs-extra": "^9.0.11",
     "@types/sharp": "^0.28.0",
+    "chokidar": "^3.5.1",
     "concurrently": "^6.0.2",
+    "fs-extra": "^10.0.0",
     "nodemon": "^2.0.7",
     "sharp": "^0.28.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.26.0"
   }
 }

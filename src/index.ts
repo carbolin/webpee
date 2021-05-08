@@ -1,91 +1,132 @@
-
-import fs from 'fs';
+import chokidar from 'chokidar';
+import fs from 'fs-extra';
 import path from 'path';
-import sharp from 'sharp';
+import sharp, { OutputInfo } from 'sharp';
 
 import { WebpeeConfig } from './config';
 
-const root = WebpeeConfig.rootPath;
+// const fsPromises = fs.promises;
 
-let input = "/input/pexels-pixabay-210186.jpg";
+const input = 'input';
 
-input = path.join(root, input);
+const inputDir = path.resolve(input);
 
-// const fileDir = path.dirname(input);
+const watcher = chokidar.watch(inputDir, {
+    ignored: '*.txt',
+    ignoreInitial: true,
+    awaitWriteFinish: true
+});
 
-// console.log('fileDir', fileDir);
+watcher.on('add', fullPath => {
 
-const extension = path.extname(input);
+    const fileDir = path.dirname(fullPath);
 
-// console.log('extension', extension);
+    const extension = path.extname(fullPath);
 
-const fileName = path.basename(input);
+    const fileName = path.basename(fullPath);
 
-console.log('fileName', fileName);
+    const croppedFilename = fileName.substr(0, fileName.lastIndexOf('.'));
 
-const croppedFilename = fileName.substr(0, fileName.lastIndexOf('.'));
+    if (!WebpeeConfig.extensions.includes(extension) || fileName.startsWith('thumb@')) {
 
-if (!WebpeeConfig.extensions.includes(extension) || fileName.startsWith('thumb@')) {
+        throw new Error('Convertion aborted - wrong File Extension.');
+    }
 
-    throw new Error('Convertion aborted - wrong File Extension.');
-}
+    const sizes = [
+        { width: 160, height: 120 },
+        { width: 400, height: 300 },
+        // { width: 640, height: 480 },
+        // { width: 960, height: 720 },
+        // { width: 1280, height: 960 },
+        // { width: 1920, height: 1080 },
+    ];
 
-const sizes = [
-    { width: 160, height: 120 },
-    { width: 400, height: 300 },
-    { width: 640, height: 480 },
-    { width: 960, height: 720 },
-    { width: 1280, height: 960 },
-    { width: 1920, height: 1080 },
-];
+    const convert = async () => {
 
-const convert = () => {
+        const output = await ensure();
 
-    sizes.map(async size => {
+        const data = sizes.map((size) => {
 
-        const thumbName = `thumb@${size.width}x${size.height}_${croppedFilename}.webp`;
+            const thumbName = `thumb@${size.width}x${size.height}_${croppedFilename}.webp`;
 
-        const output = WebpeeConfig.output || 'output';
+            const outputFilePath = path.join(output, thumbName);
 
-        const outputFilePath = path.join(root, output, thumbName);
+            try {
 
-        console.log(outputFilePath);
+                return sharp(fullPath)
+                    .resize(size.width, size.height)
+                    .webp({ quality: 70 })
+                    .toFile(outputFilePath);
 
-        const metadata: sharp.OutputInfo[] = []
+            } catch (error) {
+
+                throw new Error('Error while Convertion.');
+            }
+        });
+
+        return Promise.all(data);
+    }
+
+    const print = async (report: any): Promise<void> => {
 
         try {
 
-            const data = await sharp(input)
-                .resize(size.width, size.height)
-                .webp({ quality: 70 })
-                .toFile(outputFilePath);
+            const output = await ensure();
 
-            metadata.push(data);
+            const dataTime = new Date().getTime();
 
-            return console.log(data);
+            const fileName = `${dataTime}_report.json`;
+
+            const outputFilePath = path.join(output, fileName);
+
+            return fs.outputFile(outputFilePath, JSON.stringify(report));
 
         } catch (error) {
-            return console.error(error);
+            throw new Error('Error while printing');
         }
-    });
+    }
 
+    const ensure = async (): Promise<string> => {
 
+        const output: string = path.dirname(fullPath.replace('input', 'output'));
 
-}
+        const fullOutputPath: string = path.join(output, croppedFilename);
 
-const print = (report: any): void => {
+        try {
 
-    const fileName = 'report.json';
+            await fs.ensureDir(fullOutputPath);
 
-    const dataTime = new Date().getTime();
+            return fullOutputPath;
 
-    fs.writeFile(`../output/${dataTime}_${fileName}`, JSON.stringify(report), () => {
+        } catch (err) {
+            throw new Error('Output directory was not created.');
+        }
 
-        console.log(`Report written to ${dataTime}_${fileName}`);
+    };
 
-    });
-}
+    const moveFile = async () => {
 
+        const convDir: string = path.dirname(fullPath.replace('input', 'converted'));      
 
-convert();
+        const convFullPath = path.join(convDir, fileName);
 
+        try {
+            await fs.ensureDir(convDir);
+
+            return fs.move(fullPath, convFullPath);
+
+        } catch (error) {
+            throw new Error('Error while moving File.');
+        }
+    }
+
+    const run = async (): Promise<void> => {
+
+        const data = await convert();
+
+        await print(data);
+
+        await moveFile();
+    }
+    run();
+});
