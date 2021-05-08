@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/sharp": "^0.28.0",
     "concurrently": "^6.0.2",
     "nodemon": "^2.0.7",
     "sharp": "^0.28.1"

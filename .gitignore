@@ -117,3 +117,7 @@ dist
 
 # outdir
 build
+
+#images
+input
+output
