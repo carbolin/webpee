@@ -6,7 +6,9 @@
   "scripts": {
     "start:build": "tsc -w",
     "start:run": "nodemon build/index.js",
-    "start": "concurrently npm:start:*"
+    "start": "concurrently npm:start:*",
+    "lint": "eslint . --ext .ts",
+    "lint-and-fix": "eslint . --ext .ts --fix"
   },
   "keywords": [],
   "author": "",
@@ -18,9 +20,17 @@
     "concurrently": "^6.0.2",
     "fs-extra": "^10.0.0",
     "nodemon": "^2.0.7",
-    "sharp": "^0.28.1"
+    "sharp": "^0.28.1",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
-    "eslint": "^7.26.0"
+    "@typescript-eslint/eslint-plugin": "^4.22.1",
+    "@typescript-eslint/parser": "^4.22.1",
+    "eslint": "^7.26.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.3.1",
+    "typescript": "^4.2.4"
   }
 }

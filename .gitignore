@@ -52,6 +52,8 @@ web_modules/
 
 # Optional eslint cache
 .eslintcache
+.eslintrc.json
+.eslintrc.js
 
 # Microbundle cache
 .rpt2_cache/
@@ -119,6 +121,6 @@ dist
 build
 
 # images
-input
+images
 output
 converted
