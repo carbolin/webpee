@@ -13,5 +13,5 @@ Clone or download the repository and run following commands.
 
 If you use the default WebpeeConfig just move images to 'images' folder and webpee will do the rest 👟
 
-Im using <a href="https://github.com/paulmillr/chokidar">Chokidar</a> to watch 👀 for new images to be converted in the input folder.
+Im using <a href="https://github.com/paulmillr/chokidar">Chokidar</a> to watch 👀 for new images in the 'images' folder.
 🚂 Basic logging is done with <a href="https://github.com/winstonjs/winston">Winston</a>.
