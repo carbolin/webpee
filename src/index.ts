@@ -13,35 +13,28 @@ const config = new WebpeeConfig();
 
 const watcher = new DirectoryWatcher(config);
 
-watcher.watcher.on('add', fullFilePath => {
+// watcher.watcher.on('add', fullFilePath => {
 
-  const extension = path.extname(fullFilePath);
 
-  const fileName = path.basename(fullFilePath);
+//   const fileName = path.basename(fullFilePath);
 
-  const croppedFilename = fileName.substr(0, fileName.lastIndexOf('.'));
+//   const croppedFilename = fileName.substr(0, fileName.lastIndexOf('.'));
 
-  if (!config.allowedExtensions.includes(extension) || fileName.startsWith('thumb@')) {
-    logger.error('Convertion aborted - wrong File Extension.');
-  }
+//   const converter = new WebpConverter(config, fullFilePath, croppedFilename);
 
-  logger.info('Processing ' + fileName + ' for convertion.');
+//   const reporter = new JsonReporter(config, fullFilePath, croppedFilename);
 
-  const converter = new WebpConverter(config, fullFilePath, croppedFilename);
+//   const cleaner = new FileCleaner(config, fullFilePath, fileName);
 
-  const reporter = new JsonReporter(config, fullFilePath, croppedFilename);
+//   converter.convert()
+//     .then(() => reporter.report(converter.result))
+//     .then(() => cleaner.clean());
 
-  const cleaner = new FileCleaner(config, fullFilePath, fileName);
+// });
 
-  converter.convert()
-    .then(() => reporter.report(converter.result))
-    .then(() => cleaner.clean());
+// watcher.watcher.on('unlink', fullFilePath => {
 
-});
+//   const fileName = path.basename(fullFilePath);
 
-watcher.watcher.on('unlink', fullFilePath => {
-
-  const fileName = path.basename(fullFilePath);
-
-  logger.info(fileName + ' processing finished.');
-});
+//   logger.info(fileName + ' processing finished.');
+// });
