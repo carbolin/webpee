@@ -1,4 +1,6 @@
 export interface Watcher {
 
-    watch(): void;
+    watchOnAdd(path: string): void;
+
+    watchOnDelete(path: string): void;
 }
