@@ -1,4 +1,4 @@
 export interface Converter<T> {
     result: T[];
-    convert(): void;
+    convert(filePath: string): void | Promise<void>;
 }

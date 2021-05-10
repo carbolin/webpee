@@ -1,3 +1,3 @@
 export interface Cleaner {
-    clean(): void;
+    clean(filepath: string): void | Promise<void>;
 }

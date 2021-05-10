@@ -7,24 +7,24 @@ import { Cleaner } from './cleaner.interface';
 
 export class FileCleaner implements Cleaner {
 
-  constructor(
-    private _config: WebpeeConfig,
-    private _filePath: string,
-    private _fileName: string,
-  ) { }
+  constructor(private _config: WebpeeConfig) { }
 
-  async clean(): Promise<void> {
+  async clean(filepath: string): Promise<void> {
 
-    const convDir: string = path.dirname(
-      this._filePath.replace(this._config.watching, this._config.converted),
+    const filename = path.basename(filepath);
+
+    const converted: string = path.dirname(
+      filepath.replace(this._config.watching, this._config.converted),
     );
 
-    const convFullPath = path.join(convDir, this._fileName);
+    const newFilepath = path.join(converted, filename);
 
     try {
-      await fs.ensureDir(convDir);
+      await fs.ensureDir(converted);
 
-      fs.move(this._filePath, convFullPath, { overwrite: true });
+      await fs.move(filepath, newFilepath, { overwrite: true });
+
+      logger.info(`${filename} has been moved to ${this._config.converted}`);
 
     } catch (error) {
 

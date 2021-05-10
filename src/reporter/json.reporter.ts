@@ -8,26 +8,26 @@ import { Reporter } from './reporter.interface';
 
 export class JsonReporter implements Reporter<OutputInfo> {
 
-  constructor(
-    private _config: WebpeeConfig,
-    private _filePath: string,
-    private _fileName: string,
-  ) { }
+  constructor(private _config: WebpeeConfig) { }
 
-  async report(result: OutputInfo[]): Promise<void> {
+  async report(result: OutputInfo[], filepath: string): Promise<void> {
+
+    const filename = path.basename(filepath);
+
+    const croppedFilename = filename.substr(0, filename.lastIndexOf('.'));
 
     try {
-      const outputDir = this.generateOutputDir();
+      const outputDir = this.generateOutputDir(filepath, croppedFilename);
 
       await fs.ensureDir(outputDir);
 
-      const reportName = `${this._fileName}_report.json`;
+      const reportName = `${croppedFilename}_report.json`;
 
       const outputFilePath = path.join(outputDir, reportName);
 
-      logger.info('Reporting to JSON ' + reportName);
-
       await fs.outputFile(outputFilePath, JSON.stringify(result));
+
+      logger.info(`Reported task to ${reportName}.`)
 
     } catch (error) {
 
@@ -36,10 +36,10 @@ export class JsonReporter implements Reporter<OutputInfo> {
 
   }
 
-  private generateOutputDir(): string {
+  private generateOutputDir(filePath: string, cropFilename: string): string {
 
-    const dir = path.dirname(this._filePath.replace(this._config.watching, this._config.output));
+    const dir = path.dirname(filePath.replace(this._config.watching, this._config.output));
 
-    return path.join(dir, this._fileName);
+    return path.join(dir, cropFilename);
   };
 }

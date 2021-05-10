@@ -15,13 +15,25 @@ export class ImageValidator implements Validator {
 
     const fileName = path.basename(filepath);
 
-    if (!this._config.allowedExtensions.includes(extension) || fileName.startsWith('thumb@')) {
-      logger.error('Validation error - process aborted.');
+    if (this._config.allowedExtensions.includes(extension) && !fileName.startsWith('thumb@')) {
 
-      return { extension: true };
+      logger.info(`Validation on ${fileName} was successfull. Starting conversion.`);
+
+      return null;
     }
 
-    logger.info('Processing ' + fileName + ' for convertion.');
-    return null;
+    let error: ValidationError = {};
+
+    if (this._config.allowedExtensions.includes(extension))
+
+      error.extension = true;
+
+    if (fileName.startsWith('thumb@'))
+
+      error.filename = true;
+
+    logger.error(`Validation on ${fileName} failed. Conversion aborted.`);
+
+    return error;
   }
 }

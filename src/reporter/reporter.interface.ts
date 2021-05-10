@@ -1,3 +1,3 @@
 export interface Reporter<T> {
-    report(result: T[]): void;
+    report(result: T[], filePath: string): void | Promise<void>;
 }

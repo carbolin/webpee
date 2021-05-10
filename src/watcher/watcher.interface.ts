@@ -1,6 +1,3 @@
 export interface Watcher {
-
-    watchOnAdd(path: string): void;
-
-    watchOnDelete(path: string): void;
+    onAdd(path: string): void | Promise<void>;
 }
