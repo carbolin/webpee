@@ -21,7 +21,8 @@ I'm using <a href="https://github.com/paulmillr/chokidar">Chokidar</a>👀 to li
 * **jpg**
 * **svg**
 * **gif**
-* **tiff** 
+* **tiff**
+
 are ignored by Chokidar 👀.
 
 Basic logging is realized with <a href="https://github.com/winstonjs/winston">Winston</a>. A combinded log file and separated error log is created by default under ./logs. 🚂
