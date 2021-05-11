@@ -13,7 +13,15 @@ Clone or download the repo and run the following commands in the root directory 
 2. `tsc`
 3. `npm start`
 
-When using default WebpeeConfig just pass in the image you want to convert into 'images' folder. 🚽 will do the 👟.
+When using default WebpeeConfig all folders are created by default. Just pass in the image you want to convert into ./images folder. 🚽 will do the rest.
 
-I'm using <a href="https://github.com/paulmillr/chokidar">Chokidar</a> to listen 👀 for new images in the 'images' folder.
-🚂 Basic logging is realized with <a href="https://github.com/winstonjs/winston">Winston</a>.
+I'm using <a href="https://github.com/paulmillr/chokidar">Chokidar</a>👀 to listen for new images. All file extensions except 
+* **png**
+* **svg**
+* **jpg**
+* **svg**
+* **gif**
+* **tiff** 
+are ignored by Chokidar 👀.
+
+Basic logging is realized with <a href="https://github.com/winstonjs/winston">Winston</a>. A combinded log file and separated error log is created by default under ./logs. 🚂
