@@ -1,5 +1,5 @@
-import fs from 'fs-extra';
-import path from 'path';
+import { ensureDir, outputFile } from 'fs-extra';
+import { basename, dirname, join } from 'path';
 import { OutputInfo } from 'sharp';
 
 import { logger } from '../3th-party/logger';
@@ -12,22 +12,16 @@ export class JsonReporter implements Reporter<OutputInfo> {
 
   async report(result: OutputInfo[], filepath: string): Promise<void> {
 
-    const filename = path.basename(filepath);
-
-    const croppedFilename = filename.substr(0, filename.lastIndexOf('.'));
-
     try {
-      const outputDir = this.generateOutputDir(filepath, croppedFilename);
+      const outputDir = this.generateOutputDir(filepath);
 
-      await fs.ensureDir(outputDir);
+      await ensureDir(outputDir);
 
-      const reportName = `${croppedFilename}_report.json`;
+      const outputFilepath = join(outputDir, 'report.json');
 
-      const outputFilePath = path.join(outputDir, reportName);
+      await outputFile(outputFilepath, JSON.stringify(result));
 
-      await fs.outputFile(outputFilePath, JSON.stringify(result));
-
-      logger.info(`Reported task to ${reportName}.`)
+      logger.info(`Reported task to ${outputFilepath}.`);
 
     } catch (error) {
 
@@ -36,10 +30,14 @@ export class JsonReporter implements Reporter<OutputInfo> {
 
   }
 
-  private generateOutputDir(filePath: string, cropFilename: string): string {
+  private generateOutputDir(filepath: string): string {
 
-    const dir = path.dirname(filePath.replace(this._config.watching, this._config.output));
+    const filename = basename(filepath);
 
-    return path.join(dir, cropFilename);
+    const croppedFilename = filename.substr(0, filename.lastIndexOf('.'));
+
+    const dir = dirname(filepath.replace(this._config.watching, this._config.output));
+
+    return join(dir, croppedFilename);
   };
 }

@@ -1,5 +1,5 @@
-import fs from 'fs-extra';
-import path from 'path';
+import { ensureDir, move } from 'fs-extra';
+import { basename, dirname, join } from 'path';
 
 import { logger } from '../3th-party/logger';
 import { WebpeeConfig } from '../config';
@@ -11,18 +11,18 @@ export class FileCleaner implements Cleaner {
 
   async clean(filepath: string): Promise<void> {
 
-    const filename = path.basename(filepath);
+    const filename = basename(filepath);
 
-    const converted: string = path.dirname(
+    const converted: string = dirname(
       filepath.replace(this._config.watching, this._config.converted),
     );
 
-    const newFilepath = path.join(converted, filename);
+    const newFilepath = join(converted, filename);
 
     try {
-      await fs.ensureDir(converted);
+      await ensureDir(converted);
 
-      await fs.move(filepath, newFilepath, { overwrite: true });
+      await move(filepath, newFilepath, { overwrite: true });
 
       logger.info(`${filename} has been moved to ${this._config.converted}`);
 
@@ -30,6 +30,5 @@ export class FileCleaner implements Cleaner {
 
       logger.error('Error while moving File.');
     }
-
   }
 }

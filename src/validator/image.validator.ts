@@ -1,4 +1,4 @@
-import path from 'path';
+import { basename, extname } from 'path';
 
 import { logger } from '../3th-party/logger';
 import { WebpeeConfig } from '../config';
@@ -11,9 +11,9 @@ export class ImageValidator implements Validator {
 
   validate(filepath: string): ValidationError | null {
 
-    const extension = path.extname(filepath);
+    const extension = extname(filepath);
 
-    const fileName = path.basename(filepath);
+    const fileName = basename(filepath);
 
     if (this._config.allowedExtensions.includes(extension) && !fileName.startsWith('thumb@')) {
 
@@ -22,9 +22,9 @@ export class ImageValidator implements Validator {
       return null;
     }
 
-    let error: ValidationError = {};
+    const error: ValidationError = {};
 
-    if (this._config.allowedExtensions.includes(extension))
+    if (!this._config.allowedExtensions.includes(extension))
 
       error.extension = true;
 
@@ -32,7 +32,7 @@ export class ImageValidator implements Validator {
 
       error.filename = true;
 
-    logger.error(`Validation on ${fileName} failed. Conversion aborted.`);
+    logger.error(`Validation on ${fileName} failed. Conversion aborted, ${JSON.stringify(error)}`);
 
     return error;
   }

@@ -18,7 +18,9 @@ const cleaner = new FileCleaner(config);
 
 export const init = (): void => {
 
-    new DirectoryWatcher(config, validator, converter, reporter, cleaner);
+  const watcher = new DirectoryWatcher(config, validator, converter, reporter, cleaner);
 
-    logger.info(`Webpee is watching '${config.watching}'. Pee new images... `)
-}
+  watcher.watch();
+
+  logger.info(`Webpee is listening in '${config.watching}'. Pee new images... `);
+};

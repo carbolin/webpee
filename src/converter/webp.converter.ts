@@ -1,5 +1,5 @@
-import fs from 'fs-extra';
-import path from 'path';
+import { ensureDir } from 'fs-extra';
+import { basename, dirname, join } from 'path';
 import sharp, { OutputInfo } from 'sharp';
 
 import { logger } from '../3th-party/logger';
@@ -14,19 +14,19 @@ export class WebpConverter implements Converter<OutputInfo> {
 
   async convert(filepath: string): Promise<void> {
 
-    const filename = path.basename(filepath);
+    const filename = basename(filepath);
 
     const croppedFilename = filename.substr(0, filename.lastIndexOf('.'));
 
     const outputDir: string = this.generateOutputDir(filepath, croppedFilename);
 
     try {
-      await fs.ensureDir(outputDir);
+      await ensureDir(outputDir);
 
       const data = this._config.sizes.map((size) => {
         const thumbName = `thumb@${size.width}x${size.height}_${croppedFilename}.webp`;
 
-        const outputFilepath = path.join(outputDir, thumbName);
+        const outputFilepath = join(outputDir, thumbName);
 
         return sharp(filepath)
           .resize(size.width, size.height)
@@ -46,8 +46,8 @@ export class WebpConverter implements Converter<OutputInfo> {
   }
 
   private generateOutputDir(filePath: string, cropFilename: string): string {
-    const dir: string = path.dirname(filePath.replace(this._config.watching, this._config.output));
+    const dir: string = dirname(filePath.replace(this._config.watching, this._config.output));
 
-    return path.join(dir, cropFilename);
+    return join(dir, cropFilename);
   };
 }
