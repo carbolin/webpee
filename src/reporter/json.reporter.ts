@@ -21,7 +21,7 @@ export class JsonReporter implements Reporter<OutputInfo> {
 
       await outputFile(outputFilepath, JSON.stringify(result));
 
-      logger.info(`Reported task to ${outputFilepath}.`);
+      logger.info('Reported task to report.json.');
 
     } catch (error) {
 
